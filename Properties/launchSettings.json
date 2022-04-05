@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "import_CSV_bleh": {
+      "commandName": "Project",
+      "commandLineArgs": "--file Features.csv --table foo --file Stories.csv --dup-key \"Issue_Request,Issue key,Custom field (Issue Request Type),type\" --dup-key \"Issue_Link,Issue key,Inward issue link (Relates),link\" --dup-key \"Issue_Link,Issue key,Outward issue link (Relates),link\" --verbose"
+    }
+  }
+}
