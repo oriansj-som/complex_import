@@ -2,7 +2,7 @@
   "profiles": {
     "import_CSV_bleh": {
       "commandName": "Project",
-      "commandLineArgs": "--file Features.csv --table foo --file Stories.csv --dup-key \"Issue_Request,Issue key,Custom field (Issue Request Type),type\" --dup-key \"Issue_Link,Issue key,Inward issue link (Relates),link\" --dup-key \"Issue_Link,Issue key,Outward issue link (Relates),link\" --verbose"
+      "commandLineArgs": "--file Features.csv --table foo --file Features.csv --dup-key \"Issue_Request,Issue key,Custom field (Issue Request Type),type\" --dup-key \"Inward_Relates_Link,Issue key,Inward issue link (Relates),link\" --dup-key \"Inward_Block_Link,Issue key,Inward issue link (Blocks),link\" --dup-key \"Inward_MDHHS_Link,Issue key,Inward issue link (MDHHS),link\" --dup-key \"Inward_Clone_Link,Issue key,Inward issue link (Cloners),link\" --dup-key \"Outward_Relates_Link,Issue key,Outward issue link (Relates),link\" --dup-key \"Outward_Defect_Link,Issue key,Outward issue link (Defect),link\" --dup-key \"Outward_Clone_Link,Issue key,Outward issue link (Cloners),link\" --dup-key \"Impacted_System,Issue key,Custom field (System Impacted),system\"  --verbose"
     }
   }
 }

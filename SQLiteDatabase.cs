@@ -183,7 +183,7 @@ namespace sqlite_Example
             foreach (KeyValuePair<String, String> val in data)
             {
                 columns += String.Format(" '{0}',", val.Key.ToString());
-                values += String.Format(" '{0}',", val.Value);
+                values += String.Format(" '{0}',", val.Value.Replace("'","''"));
             }
             columns = columns.Substring(0, columns.Length - 1);
             values = values.Substring(0, values.Length - 1);

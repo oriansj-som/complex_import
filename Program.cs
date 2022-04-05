@@ -15,6 +15,7 @@ namespace import_CSV_bleh
             List<string> dup_keys = new List<string>();
             string delim = ",";
             bool emptyfail = false;
+            bool clear_related = false;
 
             Console.WriteLine("Starting up");
             int i = 0;
@@ -55,6 +56,11 @@ namespace import_CSV_bleh
                     emptyfail = true;
                     i = i + 1;
                 }
+                else if (match("--clear-related", args[i]))
+                {
+                    clear_related = true;
+                    i = i + 1;
+                }
                 else if (match("--verbose", args[i]))
                 {
                     int index = 0;
@@ -81,11 +87,11 @@ namespace import_CSV_bleh
             }
 
             Console.WriteLine(string.Format("Starting import of file: \"{0}\"\nUsing Database: \"{1}\"", filename, databasename));
-            CSV_Import.init(filename, tablename, databasename, skip_header, column_headings, delim, emptyfail, dup_keys);
+            CSV_Import.init(filename, tablename, databasename, skip_header, column_headings, delim, emptyfail, dup_keys, clear_related);
             bool l = true;
             while (l)
             {
-                l = CSV_Import.read_record();
+                l = CSV_Import.read_record(emptyfail);
             }
 
             CSV_Import.cleanup();

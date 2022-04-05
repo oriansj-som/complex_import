@@ -33,7 +33,7 @@ namespace import_CSV_bleh
         static private string table_name;
         static private bool End_Of_File;
 
-        static public void init(string filename, string tablename, string databasename, bool skip_header, List<string> column_headers, string delim, bool emptyfail, List<string> dup_kys)
+        static public void init(string filename, string tablename, string databasename, bool skip_header, List<string> column_headers, string delim, bool emptyfail, List<string> dup_kys, bool clear_related)
         {
             issues_to_deal_with = new List<dup_crap>();
             foreach(string line in dup_kys)
@@ -50,7 +50,7 @@ namespace import_CSV_bleh
 
 
             End_Of_File = false;
-            if (tablename.Contains(' ') || tablename.Contains('\t') || tablename.Contains('\n') || tablename.Contains('\r'))
+            if (tablename.Contains(' ') || tablename.Contains('\t') || tablename.Contains('\n') || tablename.Contains('\r') || tablename.Contains('\'') || tablename.Contains('"'))
             {
                 Console.WriteLine(string.Format("I refuse to deal with sql tables with white space in their names, even \"{0}\"\nSo fix that garbage", tablename));
                 Environment.Exit(4);
@@ -116,8 +116,8 @@ namespace import_CSV_bleh
 
             foreach (dup_crap d in issues_to_deal_with)
             {
-                mydatabase.ExecuteNonQuery(string.Format("drop table if exists '{0}'; ", d.target_table));
-                mydatabase.ExecuteNonQuery(string.Format("CREATE TABLE '{0}' ( '{1}', '{2}' );", d.target_table, d.key_text, d.column_name));
+                if(clear_related) mydatabase.ExecuteNonQuery(string.Format("drop table if exists '{0}'; ", d.target_table));
+                mydatabase.ExecuteNonQuery(string.Format("CREATE TABLE IF NOT EXISTS '{0}' ( '{1}', '{2}' );", d.target_table, d.key_text, d.column_name));
             }
 
 
@@ -146,7 +146,7 @@ namespace import_CSV_bleh
             }
         }
 
-        static public bool read_record()
+        static public bool read_record(bool emptyfail)
         {
             List<string> entries = read_row();
             if (!End_Of_File) return End_Of_File;
@@ -159,7 +159,13 @@ namespace import_CSV_bleh
                 i = i + 1;
             }
 
-            mydatabase.Insert(table_name, tmp);
+            bool result = mydatabase.Insert(table_name, tmp);
+            if(!result)
+            {
+                Console.WriteLine("Failed to insert:");
+                Console.WriteLine(string.Join(Environment.NewLine, tmp));
+                if (emptyfail) Environment.Exit(11);
+            }
 
             foreach( dup_crap d in issues_to_deal_with)
             {
@@ -169,7 +175,13 @@ namespace import_CSV_bleh
                     {
                         Dictionary<string, string> tmp2 = new Dictionary<string, string>() { { d.key_text, entries[d.key_index] },
                                                                                         { d.column_name, entries[c] } };
-                        mydatabase.Insert(d.target_table, tmp2);
+                        result = mydatabase.Insert(d.target_table, tmp2);
+                        if (!result)
+                        {
+                            Console.WriteLine("Failed to insert:");
+                            Console.WriteLine(string.Join(Environment.NewLine, tmp2));
+                            if (emptyfail) Environment.Exit(12);
+                        }
                     }
                 }
             }
