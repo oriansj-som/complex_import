@@ -153,9 +153,14 @@ namespace import_CSV_bleh
 
             Dictionary<string, string> tmp = new Dictionary<string, string>();
             int i = 0;
-            while (i < row_length)
+            int j = 0;
+            while (i < entries.Count)
             {
-                tmp.Add(table_cols[i], entries[i]);
+                if (!iscrap(i))
+                {
+                    tmp.Add(table_cols[j], entries[i]);
+                    j = j + 1;
+                }
                 i = i + 1;
             }
 
@@ -209,7 +214,18 @@ namespace import_CSV_bleh
                 i = i + 1;
             }
             return s;
+        }
 
+        static private bool iscrap(int col)
+        {
+            foreach (dup_crap d in issues_to_deal_with)
+            {
+                foreach (int i in d.col_index)
+                {
+                    if (i == col) return true;
+                }
+            }
+            return false;
         }
 
         static private bool match(string a, string b)
